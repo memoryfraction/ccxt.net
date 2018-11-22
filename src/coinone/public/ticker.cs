@@ -21,7 +21,7 @@ namespace CCXT.NET.Coinone.Public
         /// <summary>
         /// 64-bit Unix Timestamp in milliseconds since Epoch 1 Jan 1970
         /// </summary>
-        [JsonProperty(PropertyName = "origin_timestamp")]
+        [JsonProperty(PropertyName = "originTimestamp")]
         public override long timestamp
         {
             get;

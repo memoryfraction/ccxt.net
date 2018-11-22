@@ -51,6 +51,16 @@ namespace CCXT.NET.Coinone.Private
         /// <summary>
         /// 
         /// </summary>
+        [JsonProperty(PropertyName = "originTimestamp")]
+        public override long timestamp
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override TransactionType transactionType
         {
             get;
@@ -92,18 +102,8 @@ namespace CCXT.NET.Coinone.Private
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "origin_timestamp")]
-        public override long timestamp
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         [JsonProperty(PropertyName = "timestamp")]
-        private long timeValue
+        private long timestampValue
         {
             set
             {

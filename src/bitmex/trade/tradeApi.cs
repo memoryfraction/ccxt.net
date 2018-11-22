@@ -95,7 +95,16 @@ namespace CCXT.NET.BitMEX.Trade
                         _params.Add("startTime", CUnixTime.ConvertToUtcTimeMilli(since).ToString("yyyy-MM-dd HH:mm"));
                     _params.Add("reverse", true);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/order", _params);
@@ -159,7 +168,16 @@ namespace CCXT.NET.BitMEX.Trade
                         }
                     });
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/order", _params);
@@ -220,7 +238,16 @@ namespace CCXT.NET.BitMEX.Trade
                         }
                     });
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/order", _params);
@@ -231,7 +258,7 @@ namespace CCXT.NET.BitMEX.Trade
                 if (_json_result.success == true)
                 {
                     var _orders = tradeClient.DeserializeObject<List<BMyOrderItem>>(_json_value.Content);
-                    foreach (var _o in _orders.Where(o => OrderStatusConverter.IsAlive(o.orderStatus) == true))
+                    foreach (var _o in _orders.Where(o => o.orderStatus == OrderStatus.Open))
                     {
                         //var _multiplier = publicApi.publicClient.ExchangeInfo.GetAmountMultiplier(_o.symbol, 1.0m);
 
@@ -282,7 +309,16 @@ namespace CCXT.NET.BitMEX.Trade
                         }
                     });
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/position", _params);
@@ -336,7 +372,19 @@ namespace CCXT.NET.BitMEX.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _params = tradeClient.MergeParamsAndArgs(args);
+                var _params = new Dictionary<string, object>();
+                {
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/position", _params);
 #if DEBUG
@@ -401,12 +449,20 @@ namespace CCXT.NET.BitMEX.Trade
                 {
                     _params.Add("symbol", _market.result.symbol);
                     _params.Add("count", limits);
-                    _params.Add("reverse", true);
-
                     if (since > 0)
                         _params.Add("startTime", CUnixTime.ConvertToUtcTimeMilli(since).ToString("yyyy-MM-dd HH:mm"));
+                    _params.Add("reverse", true);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/api/v1/execution/tradeHistory", _params);
@@ -447,7 +503,7 @@ namespace CCXT.NET.BitMEX.Trade
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -462,17 +518,25 @@ namespace CCXT.NET.BitMEX.Trade
 
                 var _buy_sell = sideType == SideType.Bid ? "Buy" : "Sell";
 
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("symbol", _market.result.symbol);
+                    _params.Add("side", _buy_sell);
+                    _params.Add("ordType", "Limit");
+                    _params.Add("orderQty", quantity);
+                    _params.Add("price", price);
+
+                    if (args != null)
                     {
-                        { "symbol", _market.result.symbol },
-                        { "side", _buy_sell },
-                        { "ordType", "Limit" },
-                        { "orderQty", quantity },
-                        { "price", price }
-                    },
-                    args
-                );
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/api/v1/order", _params);
 #if DEBUG
@@ -511,7 +575,7 @@ namespace CCXT.NET.BitMEX.Trade
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -526,16 +590,24 @@ namespace CCXT.NET.BitMEX.Trade
 
                 var _buy_sell = sideType == SideType.Bid ? "Buy" : "Sell";
 
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("symbol", _market.result.symbol);
+                    _params.Add("side", _buy_sell);
+                    _params.Add("ordType", "Market");
+                    _params.Add("orderQty", quantity);
+
+                    if (args != null)
                     {
-                        { "symbol", _market.result.symbol },
-                        { "side", _buy_sell },
-                        { "ordType", "Market" },
-                        { "orderQty", quantity }
-                    },
-                    args
-                );
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/api/v1/order", _params);
 #if DEBUG
@@ -577,13 +649,21 @@ namespace CCXT.NET.BitMEX.Trade
 
             tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
             {
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("orders", orders);
+
+                    if (args != null)
                     {
-                        { "orders", orders }
-                    },
-                    args
-                );
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/api/v1/order/bulk", _params);
 #if DEBUG
@@ -609,9 +689,9 @@ namespace CCXT.NET.BitMEX.Trade
         /// </summary>
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
-        /// <param name="orderType">The type of order is limit, market or position</param>
-        /// <param name="price">price of coin</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <param name="orderType"></param>
+        /// <param name="price"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
         public async Task<MyOrder> ClosePosition(string base_name, string quote_name, OrderType orderType, decimal price = 0.0m, Dictionary<string, object> args = null)
         {
@@ -630,7 +710,16 @@ namespace CCXT.NET.BitMEX.Trade
                     if (orderType == OrderType.Limit)
                         _params.Add("price", price);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/api/v1/order", _params);
@@ -662,7 +751,7 @@ namespace CCXT.NET.BitMEX.Trade
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="leverage"></param>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <param name="args"></param>
         /// <returns></returns>
         public async Task<MyPosition> ChooseLeverage(string base_name, string quote_name, decimal leverage, Dictionary<string, object> args = null)
         {
@@ -673,16 +762,24 @@ namespace CCXT.NET.BitMEX.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
-                    {
-                        { "symbol", _market.result.symbol },
-                        { "leverage", leverage }
-                    },
-                    args
-                );
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("symbol", _market.result.symbol);
+                    _params.Add("leverage", leverage);
 
-                var _json_value = await tradeClient.CallApiPost1Async("/api/v1/position/leverage", _params);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
+
+                var _json_value = await tradeClient.CallApiPut1Async("/api/v1/position/leverage", _params);
 #if DEBUG
                 _result.rawJson = _json_value.Content;
 #endif
@@ -705,56 +802,6 @@ namespace CCXT.NET.BitMEX.Trade
             return _result;
         }
 
-        /// <summary>
-        /// Update an order.
-        /// </summary>
-        /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
-        /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
-        /// <param name="order_id">Order number registered for sale or purchase</param>
-        /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
-        /// <param name="sideType">type of buy(bid) or sell(ask)</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
-        /// <returns></returns>
-        public async Task<MyOrder> UpdateOrder(string base_name, string quote_name, string order_id, decimal quantity, decimal price, SideType sideType, Dictionary<string, object> args = null)
-        {
-            var _result = new MyOrder(base_name, quote_name);
-
-            var _market = await publicApi.LoadMarket(_result.marketId);
-            if (_market.success == true)
-            {
-                tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
-
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
-                    {
-                        { "orderID", order_id },
-                        { "orderQty", quantity },
-                        { "price", price }
-                    },
-                    args
-                );
-
-                var _json_value = await tradeClient.CallApiPut1Async("/api/v1/order", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = tradeClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = tradeClient.DeserializeObject<BPlaceOrderItem>(_json_value.Content);
-                    _result.result = _json_data;
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_market);
-            }
-
-            return _result;
-        }
 
         /// <summary>
         /// Cancel an order.
@@ -763,7 +810,7 @@ namespace CCXT.NET.BitMEX.Trade
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="order_id">Order number registered for sale or purchase</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -776,13 +823,21 @@ namespace CCXT.NET.BitMEX.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("orderID", order_id);
+
+                    if (args != null)
                     {
-                        { "orderID", order_id }
-                    },
-                    args
-                );
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiDelete1Async("/api/v1/order", _params);
 #if DEBUG
@@ -831,13 +886,21 @@ namespace CCXT.NET.BitMEX.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _params = tradeClient.MergeParamsAndArgs(
-                    new Dictionary<string, object>
+                var _params = new Dictionary<string, object>();
+                {
+                    _params.Add("orderID", order_ids);
+
+                    if (args != null)
                     {
-                        { "orderID", order_ids }
-                    },
-                    args
-                );
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiDelete1Async("/api/v1/order", _params);
 #if DEBUG
@@ -876,7 +939,19 @@ namespace CCXT.NET.BitMEX.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _params = tradeClient.MergeParamsAndArgs(args);
+                var _params = new Dictionary<string, object>();
+                {
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
+                }
 
                 var _json_value = await tradeClient.CallApiDelete1Async("/api/v1/order/all", _params);
 #if DEBUG

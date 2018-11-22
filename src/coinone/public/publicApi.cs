@@ -50,7 +50,16 @@ namespace CCXT.NET.Coinone.Public
                 {
                     _params.Add("currency", "all");
 
-                    publicClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await publicClient.CallApiGet1Async("/ticker", _params);
@@ -149,7 +158,16 @@ namespace CCXT.NET.Coinone.Public
                 {
                     _params.Add("currency", _market.result.symbol);
 
-                    publicClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await publicClient.CallApiGet1Async("/ticker", _params);
@@ -195,7 +213,16 @@ namespace CCXT.NET.Coinone.Public
                 {
                     _params.Add("currency", "all");
 
-                    publicClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await publicClient.CallApiGet1Async("/ticker", _params);
@@ -255,7 +282,16 @@ namespace CCXT.NET.Coinone.Public
                 {
                     _params.Add("currency", _market.result.symbol);
 
-                    publicClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await publicClient.CallApiGet1Async("/orderbook", _params);
@@ -313,7 +349,16 @@ namespace CCXT.NET.Coinone.Public
                     _params.Add("currency", _market.result.symbol);
                     _params.Add("period", _timeframe);                  // period[String] Period. Default value: hour. Allowed values: hour, day
 
-                    publicClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await publicClient.CallApiGet1Async("/trades", _params);

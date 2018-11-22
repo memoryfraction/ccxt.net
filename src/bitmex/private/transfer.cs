@@ -83,7 +83,7 @@ namespace CCXT.NET.BitMEX.Private
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "origin_timestamp")]
+        [JsonProperty(PropertyName = "originTimestamp")]
         public override long timestamp
         {
             get;

@@ -23,7 +23,7 @@ namespace CCXT.NET.BitMEX.Public
         /// <summary>
         /// 64-bit Unix Timestamp in milliseconds since Epoch 1 Jan 1970
         /// </summary>
-        [JsonProperty(PropertyName = "origin_timestamp")]
+        [JsonProperty(PropertyName = "originTimestamp")]
         public override long timestamp
         {
             get;
@@ -157,24 +157,6 @@ namespace CCXT.NET.BitMEX.Public
         /// </summary>
         [JsonProperty(PropertyName = "foreignNotional")]
         public override decimal quoteVolume
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal lastSize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public decimal turnOver
         {
             get;
             set;

@@ -73,7 +73,16 @@ namespace CCXT.NET.Bithumb.Private
                 {
                     _params.Add("currency", _currency_id.result); //default : BTC
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async("/info/wallet_address", _params);
@@ -124,7 +133,16 @@ namespace CCXT.NET.Bithumb.Private
                     _params.Add("units", quantity);
                     _params.Add("address", address);
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async($"/trade/btc_withdrawal", _params);
@@ -198,7 +216,16 @@ namespace CCXT.NET.Bithumb.Private
                     _params.Add("account", account);
                     _params.Add("price", amount);
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async($"/trade/krw_withdrawal", _params);
@@ -276,7 +303,16 @@ namespace CCXT.NET.Bithumb.Private
                     _params.Add("count", limits);
                     _params.Add("searchGb", 0);     // 0 : 전체, 1 : 구매완료, 2 : 판매완료, 3 : 출금중, 4 : 입금, 5 : 출금, 9 : KRW입금중
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async("/info/user_transactions", _params);
@@ -346,7 +382,16 @@ namespace CCXT.NET.Bithumb.Private
                 {
                     _params.Add("currency", _currency_id.result);
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async("/info/account", _params);
@@ -403,7 +448,16 @@ namespace CCXT.NET.Bithumb.Private
                 {
                     _params.Add("currency", _currency_id.result);
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async("/info/balance", _params);
@@ -469,7 +523,16 @@ namespace CCXT.NET.Bithumb.Private
                 {
                     _params.Add("currency", "ALL");
 
-                    privateClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await privateClient.CallApiPost1Async("/info/balance", _params);

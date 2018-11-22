@@ -82,7 +82,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("offset", 0);
                     _params.Add("limit", 40);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/user/orders", _params);
@@ -140,7 +149,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("offset", 0);
                     _params.Add("limit", limits);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/user/orders", _params);
@@ -200,7 +218,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("offset", 0);
                     _params.Add("limit", 50);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/user/orders/open", _params);
@@ -268,7 +295,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("offset", 0);
                     _params.Add("limit", limits);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiGet1Async("/user/orders", _params);
@@ -312,7 +348,7 @@ namespace CCXT.NET.Korbit.Trade
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -334,7 +370,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("price", price);
                     _params.Add("coin_amount", quantity);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiPost1Async($"/user/orders/{_buy_sell}", _params);
@@ -390,7 +435,7 @@ namespace CCXT.NET.Korbit.Trade
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -415,7 +460,16 @@ namespace CCXT.NET.Korbit.Trade
                     else
                         _params.Add("coin_amount", quantity);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiPost1Async($"/user/orders/{_buy_sell}", _params);
@@ -472,7 +526,7 @@ namespace CCXT.NET.Korbit.Trade
         /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
         /// <param name="order_id">Order number registered for sale or purchase</param>
         /// <param name="quantity">amount of coin</param>
-        /// <param name="price">price of coin</param>
+        /// <param name="price">fiat rate of coin</param>
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
@@ -490,7 +544,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("currency_pair", _market.result.symbol);
                     _params.Add("id", order_id);
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/user/orders/cancel", _params);
@@ -565,7 +628,16 @@ namespace CCXT.NET.Korbit.Trade
                     _params.Add("currency_pair", _market.result.symbol);
                     _params.Add("id", new CArgument { isArray = true, value = order_ids });
 
-                    tradeClient.MergeParamsAndArgs(_params, args);
+                    if (args != null)
+                    {
+                        foreach (var _a in args)
+                        {
+                            if (_params.ContainsKey(_a.Key) == true)
+                                _params.Remove(_a.Key);
+
+                            _params.Add(_a.Key, _a.Value);
+                        }
+                    }
                 }
 
                 var _json_value = await tradeClient.CallApiPost1Async("/user/orders/cancel", _params);
