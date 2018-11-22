@@ -1,27 +1,24 @@
-﻿using Newtonsoft.Json;
-using OdinSdk.BaseLib.Coin;
-using OdinSdk.BaseLib.Configuration;
+﻿using OdinSdk.BaseLib.Configuration;
 
 namespace CCXT.NET.Korbit
 {
     /// <summary>
-    /// access token, refresh token
+    /// ACCESS TOKEN, REFRESH TOKEN
     /// </summary>
-    public class AccessToken : ApiResult
+    public class AccessToken
     {
         /// <summary>
         /// 
         /// </summary>
         public AccessToken()
         {
-            timestamp = CUnixTime.NowMilli;
+            timestamp = CUnixTime.Now;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "token_type")]
-        public string tokenType
+        public string token_type
         {
             get;
             set;
@@ -30,8 +27,7 @@ namespace CCXT.NET.Korbit
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "access_token")]
-        public string accessToken
+        public string access_token
         {
             get;
             set;
@@ -40,8 +36,7 @@ namespace CCXT.NET.Korbit
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "expires_in")]
-        public int expiresIn
+        public int expires_in
         {
             get;
             set;
@@ -50,8 +45,7 @@ namespace CCXT.NET.Korbit
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "refresh_token")]
-        public string refreshToken
+        public string refresh_token
         {
             get;
             set;
@@ -67,22 +61,11 @@ namespace CCXT.NET.Korbit
         }
 
         /// <summary>
-        /// ISO 8601 datetime string with milliseconds
-        /// </summary>
-        public string datetime
-        {
-            get
-            {
-                return CUnixTime.ConvertToUtcTimeMilli(timestamp).ToString("o");
-            }
-        }
-
-        /// <summary>
-        /// 10분 전 갱신
+        /// 
         /// </summary>
         public bool CheckExpired()
         {
-            return CUnixTime.Now >= (timestamp / 1000 + expiresIn - (60 * 10));
+            return CUnixTime.Now > (timestamp + expires_in - 10);
         }
     }
 }

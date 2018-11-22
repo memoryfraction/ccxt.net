@@ -1,18 +1,14 @@
-﻿using Newtonsoft.Json;
-using OdinSdk.BaseLib.Coin;
-using OdinSdk.BaseLib.Coin.Private;
-using OdinSdk.BaseLib.Coin.Types;
-
-namespace CCXT.NET.Korbit.Private
+﻿namespace CCXT.NET.Korbit.Private
 {
     /// <summary>
     /// 
     /// </summary>
-    public class KTransactionDetails
+    public class KTransferDetail
     {
         /// <summary>
-        /// 
+        /// 코인의 거래 ID
         /// </summary>
+        /// <returns></returns>
         public string transaction_id
         {
             get;
@@ -20,8 +16,9 @@ namespace CCXT.NET.Korbit.Private
         }
 
         /// <summary>
-        /// 
+        /// 코인의 예금주
         /// </summary>
+        /// <returns></returns>
         public string address
         {
             get;
@@ -29,17 +26,19 @@ namespace CCXT.NET.Korbit.Private
         }
 
         /// <summary>
-        /// 
+        /// 코인이 XRP인 경우에만 표시되는 destination tag
         /// </summary>
-        public string destiantion_tag
+        /// <returns></returns>
+        public string destination_tag
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 
+        /// 거래에 사용된 은행의 이름
         /// </summary>
+        /// <returns></returns>
         public string bank
         {
             get;
@@ -47,17 +46,19 @@ namespace CCXT.NET.Korbit.Private
         }
 
         /// <summary>
-        /// 
+        /// 거래에 사용된 계좌번호
         /// </summary>
-        public string account_number
+        /// <returns></returns>
+        public string account
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 
+        /// 예금주
         /// </summary>
+        /// <returns></returns>
         public string owner
         {
             get;
@@ -68,108 +69,98 @@ namespace CCXT.NET.Korbit.Private
     /// <summary>
     /// 
     /// </summary>
-    public class KTransfer : OdinSdk.BaseLib.Coin.Private.Transfer, ITransfer
+    public class KTransfer
     {
         /// <summary>
-        /// 
+        /// 입출금의 ID 식별번호
         /// </summary>
-        public string transferId
+        public ulong id
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 
+        /// 입출금의 종류로 입금(deposit) 또는 출금(withdrawal)이 나오게 된다.
         /// </summary>
-        [JsonProperty(PropertyName = "status")]
-        private string status
-        {
-            set
-            {
-                message = value;
-                if (message == "success")
-                {
-                    statusCode = 0;
-                    errorCode = ErrorCode.Success;
-                    success = true;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Query Status of BTC Deposit and Transfer
-    /// </summary>
-    public class KTransferItem : OdinSdk.BaseLib.Coin.Private.TransferItem, ITransferItem
-    {
-        /// <summary>
-        /// The unique ID of BTC deposit or withdrawal request.
-        /// </summary>
-        [JsonProperty(PropertyName = "id")]
-        public override string transferId
+        public string type
         {
             get;
             set;
         }
-        
+
         /// <summary>
-        /// Unix timestamp in milliseconds by the time deposit or withdrawal request was created.
+        /// 주문이 이루어진 화폐 단위.
         /// </summary>
-        [JsonProperty(PropertyName = "created_at")]
-        private long timeValue
+        public string currency
         {
-            set
-            {
-                timestamp = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
-        /// Current status of the order.
+        /// 입출금된 화폐의 수량.
         /// </summary>
-        [JsonProperty(PropertyName = "status")]
-        private string statusValue
+        public decimal amount
         {
-            set
-            {
-                this.isCompleted = value == "filled";
-            }
+            get;
+            set;
         }
 
         /// <summary>
-        /// The type of the transfer, which is either deposit or withdrawal.
+        /// 입출금이 완료된 시각. 입출금이 완료되지 않았을 때는 이 필드는 표시되지 않는다. 
+        /// Unix timestamp(milliseconds)로 제공된다.
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
-        private string transactionValue
+        public long completed_at
         {
-            set
-            {
-                transactionType = TransactionTypeConverter.FromString(value);
-            }
+            get;
+            set;
         }
 
         /// <summary>
-        /// 
+        /// 입출금 주문이 새로이 갱신된 시각. 이 필드값을 기준으로 입출금 항목이 최신순으로 정렬되어 리턴된다. 
+        /// Unix timestamp(milliseconds)로 제공된다.
         /// </summary>
-        [JsonProperty(PropertyName = "details")]
-        private KTransactionDetails details
+        public long updated_at
         {
-            set
-            {
-                this.transactionId = value.transaction_id;
+            get;
+            set;
+        }
 
-                if (this.transactionType == TransactionType.Deposit)
-                {
-                    this.fromAddress = value.address;
-                    this.fromTag = value.destiantion_tag;
-                }
-                else
-                {
-                    this.toAddress = value.address;
-                    this.toTag = value.destiantion_tag;
-                }
-            }
+        /// <summary>
+        /// 입출금이 주문된 시각. Unix timestamp(milliseconds)로 제공된다.
+        /// </summary>
+        public long created_at
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 현재 입출금 주문의 상태.
+        /// </summary>
+        public string status
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 출금액에서 차감된 출금수수료. 수수료의 화폐 단위는 출금된 화폐와 같다. 수수료가 발생한 경우에만 이 필드가 표시된다.
+        /// </summary>
+        public decimal fee
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 서브필드 (코인 또는 원화 입출금시)
+        /// </summary>
+        public KTransferDetail details
+        {
+            get;
+            set;
         }
     }
 }

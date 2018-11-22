@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using OdinSdk.BaseLib.Coin;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CCXT.NET.Korbit
@@ -11,125 +10,50 @@ namespace CCXT.NET.Korbit
     /// <summary>
     /// 
     /// </summary>
-    public sealed class KorbitClient : OdinSdk.BaseLib.Coin.XApiClient, IXApiClient
+    public class KorbitClient : XApiClient
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public override string DealerName { get; set; } = "Korbit";
+        private const string __api_url = "https://api.korbit.co.kr";
+
+        private string __user_name;
+        private string __user_password;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="division">exchange's division for communication</param>
-        public KorbitClient(string division)
-            : base(division)
+        public KorbitClient()
+            : base(__api_url, "", "")
         {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="division">exchange's division for communication</param>
-        /// <param name="connect_key">exchange's api key for connect</param>
-        /// <param name="secret_key">exchange's secret key for signature</param>
-        /// <param name="user_name">exchange's id or uuid for login</param>
-        /// <param name="user_password">exchange's password for login</param>
-        public KorbitClient(string division, string connect_key, string secret_key, string user_name, string user_password)
-            : base(division, connect_key, secret_key, user_name, user_password, true)
+        /// <param name="connect_key"></param>
+        /// <param name="secret_key"></param>
+        /// <param name="user_name"></param>
+        /// <param name="user_password"></param>
+        public KorbitClient(string connect_key, string secret_key, string user_name, string user_password)
+            : base(__api_url, connect_key, secret_key)
         {
+            __user_name = user_name;
+            __user_password = user_password;
         }
 
-        /// <summary>
-        /// information of exchange for trading
-        /// </summary>
-        public override ExchangeInfo ExchangeInfo
-        {
-            get
-            {
-                if (base.ExchangeInfo == null)
-                {
-                    base.ExchangeInfo = new ExchangeInfo(this.DealerName)
-                    {
-                        Countries = new List<string>
-                        {
-                            "KR"
-                        },
-                        Urls = new ExchangeUrls
-                        {
-                            logo = "https://d3esrl798jsx2v.cloudfront.net/share/logo/logo-landing.png",
-                            api = new Dictionary<string, string>
-                            {
-                                { "public", "https://api.korbit.co.kr/v1" },
-                                { "private", "https://api.korbit.co.kr/v1" },
-                                { "trade", "https://api.korbit.co.kr/v1" }
-                            },
-                            www = "https://www.korbit.co.kr/",
-                            doc = new List<string>
-                            {
-                                "https://apidocs.korbit.co.kr/"
-                            },
-                            fees = new List<string>
-                            {
-                                "https://www.korbit.co.kr/orders/trading_volumes"
-                            }
-                        },
-                        RequiredCredentials = new RequiredCredentials
-                        {
-                            apikey = true,
-                            secret = true,
-                            uid = false,
-                            login = true,
-                            password = true,
-                            twofa = false
-                        },
-                        LimitRate = new ExchangeLimitRate
-                        {
-                            useTotal = false,
-                            token = new ExchangeLimitCalled { rate = 60000 },          // Creating / refreshing access token calls are limited to 60 calls per 60 minutes
-                            @public = new ExchangeLimitCalled { rate = 1000 },         // Ticker calls are limited to 60 calls per 60 seconds
-                            @private = new ExchangeLimitCalled { rate = 1000 },
-                            trade = new ExchangeLimitCalled { rate = 1000 },
-                            total = new ExchangeLimitCalled { rate = 84 }              // All other calls combined, are limited to 12 calls per 1 second.
-                        },
-                        Fees = new MarketFees
-                        {
-                            trading = new MarketFee
-                            {
-                                tierBased = false,      // true for tier-based/progressive
-                                percentage = false,     // fixed commission
-
-                                maker = 0.08m / 100m,
-                                taker = 0.20m / 100m
-                            }
-                        }
-                    };
-                }
-
-                return base.ExchangeInfo;
-            }
-        }
-
-        private static AccessToken __access_token = new AccessToken();
+        private AccessToken __access_token = null;
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<AccessToken> GetAccessToken()
+        public async Task<AccessToken> AccessToken()
         {
-            if (__access_token.success == true)
+            if (__access_token != null && String.IsNullOrEmpty(__access_token.access_token) == false)
             {
                 if (__access_token.CheckExpired() == true)
-                    __access_token = await GetAccessToken("refresh_token", __access_token.refreshToken);
+                    __access_token = await GetRefreshToken(__access_token);
             }
-
-            if (__access_token.success == false)
-            {
-                __access_token = await GetAccessToken("password");
-                if (__access_token.success == false)
-                    throw new ArgumentException(__access_token.message);
-            }
+            else if (String.IsNullOrEmpty(ConnectKey) == false)
+                __access_token = await GetAccessToken();
 
             return __access_token;
         }
@@ -138,157 +62,69 @@ namespace CCXT.NET.Korbit
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<AccessToken> GetAccessToken(string grant_type, string refresh_token = "")
+        public async Task<AccessToken> GetAccessToken()
         {
-            var _result = new AccessToken();
-
             var _params = new Dictionary<string, object>();
             {
                 _params.Add("client_id", ConnectKey);
                 _params.Add("client_secret", SecretKey);
-
-                _params.Add("grant_type", grant_type);
-
-                if (grant_type == "password")
-                {
-                    _params.Add("username", UserName);
-                    _params.Add("password", UserPassword);
-                }
-                else
-                    _params.Add("refresh_token", refresh_token);
+                _params.Add("username", __user_name);
+                _params.Add("password", __user_password);
+                _params.Add("grant_type", "password");
             }
 
-            var _request = await base.CreatePostRequest("/oauth2/access_token", _params);
-            {
-                var _access_token = await base.RestExecuteAsync(_request);
-                if (_access_token.IsSuccessful == true)
-                {
-                    _result = this.DeserializeObject<AccessToken>(_access_token.Content);
-                    _result.SetSuccess();
-                }
-                else
-                {
-                    _result.SetFailure(
-                            $"get access token error: {_access_token.Content}, grant_type: {grant_type}, refresh_token: {refresh_token}"
-                        );
-                }
-            }
-
-            return _result;
+            return await this.CallApiPostAsync<AccessToken>("/v1/oauth2/access_token", _params);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="endpoint">api link address of a function</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async Task<IRestRequest> CreatePostRequest(string endpoint, Dictionary<string, object> args = null)
+        public async Task<AccessToken> GetRefreshToken(AccessToken access_token)
         {
-            var _request = await base.CreatePostRequest(endpoint, args);
-
-            if (IsAuthentication == true)
+            var _params = new Dictionary<string, object>();
             {
-#if DEBUG
-                if (TestXUnitMode == XUnitMode.UseExchangeServer)
-                {
-#endif
-                    var _nonce = GenerateOnlyNonce(13);
-
-                    var _access_token = await GetAccessToken();
-                    if (_access_token != null)
-                        _request.AddHeader("Authorization", $"{_access_token.tokenType} {_access_token.accessToken}");
-
-                    _request.AddParameter("nonce", _nonce);
-#if DEBUG
-                }
-#endif
+                _params.Add("client_id", ConnectKey);
+                _params.Add("client_secret", SecretKey);
+                _params.Add("refresh_token", access_token.refresh_token);
+                _params.Add("grant_type", "refresh_token");
             }
 
-            return _request;
+            return await this.CallApiPostAsync<AccessToken>("/v1/oauth2/access_token", _params);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="endpoint">api link address of a function</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="endpoint"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
-        public override async Task<IRestRequest> CreateGetRequest(string endpoint, Dictionary<string, object> args = null)
+        public new async Task<T> CallApiGetAsync<T>(string endpoint, Dictionary<string, object> args = null) where T : new()
         {
-            var _request = await base.CreateGetRequest(endpoint, args);
+            var _request = CreateJsonRequest(endpoint, Method.GET);
 
-            if (IsAuthentication == true)
+            if (args != null)
             {
-#if DEBUG
-                if (TestXUnitMode == XUnitMode.UseExchangeServer)
-                {
-#endif
-                    var _access_token = await GetAccessToken();
-                    if (_access_token != null)
-                        _request.AddHeader("Authorization", $"{_access_token.tokenType} {_access_token.accessToken}");
-#if DEBUG
-                }
-#endif
+                foreach (var a in args)
+                    _request.AddParameter(a.Key, a.Value);
             }
 
-            return _request;
-        }
+            var _access_token = await AccessToken();
+            if (_access_token != null)
+                _request.AddHeader("Authorization", $"Bearer {_access_token.access_token}");
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="response">response value arrive from exchange's server</param>
-        /// <returns></returns>
-        public override BoolResult GetResponseMessage(IRestResponse response = null)
-        {
-            var _result = new BoolResult();
-
-            if (response != null)
+            var _client = CreateJsonClient(__api_url);
             {
-                if (response.IsSuccessful == true)
+                var _tcs = new TaskCompletionSource<IRestResponse>();
+                var _handle = _client.ExecuteAsync(_request, response =>
                 {
-                    if (String.IsNullOrEmpty(response.Content) == false && response.Content != "[]")
-                    {
-                        var _json_result = this.DeserializeObject<JToken>(response.Content);
+                    _tcs.SetResult(response);
+                });
 
-                        var _json_status = _json_result.SelectToken("status");
-                        if (_json_status != null)
-                        {
-                            var _json_message = _json_status.Value<string>();
-                            if (_json_message != "success")
-                            {
-                                _result.SetFailure(
-                                        _json_message,
-                                        ErrorCode.ResponseDataError
-                                    );
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _result.SetFailure(errorCode: ErrorCode.NotFoundData);
-                    }
-                }
-
-                if (_result.success == true && response.IsSuccessful == false)
-                {
-                    var _message = response.ErrorMessage ?? response.StatusDescription;
-
-                    var _warning = response.Headers.Where(h => h.Name.ToLower() == "warning").SingleOrDefault();
-                    if (_warning != null)
-                        _message = _warning.Value.ToString();
-
-                    _result.SetFailure(
-                            _message,
-                            ErrorCode.ResponseRestError,
-                            (int)response.StatusCode,
-                            false
-                        );
-                }
+                var _response = await _tcs.Task;
+                return JsonConvert.DeserializeObject<T>(_response.Content);
             }
-
-            return _result;
         }
     }
 }

@@ -1,6 +1,6 @@
 # CCXT.NET - CryptoCurrency eXchange Trading Library for .NET
 
-[![Build status](https://ci.appveyor.com/api/projects/status/dnp9i3t6sexv9tpa?svg=true)](https://ci.appveyor.com/project/lisa3907/ccxt-net)
+[![Build status](https://ci.appveyor.com/api/projects/status/dnp9i3t6sexv9tpa?svg=true)](https://ci.appveyor.com/project/lisa3907/ccxt.net)
 
 This project is an extension of [ccxt](https://github.com/ccxt/ccxt).
 
@@ -17,10 +17,8 @@ The ccxt.net library currently supports the following 14 cryptocurrency exchange
 |---------------------------------------------------------------------------------------------------------------------------|--------------------|-----------------------------------------------------------|:---:|:--------------------------------------------------------------------------------------------:|-----------------------------------------|
 |![bithumb](https://user-images.githubusercontent.com/1294454/30597177-ea800172-9d5e-11e7-804c-b9d4fa9b56b0.jpg)            | bithumb            | [Bithumb](https://www.bithumb.com)                        | *   | [API](https://www.bithumb.com/u1/US127)                                                      | South Korea                             |
 |![coinone](https://user-images.githubusercontent.com/1294454/38003300-adc12fba-323f-11e8-8525-725f53c4a659.jpg)            | coinone            | [CoinOne](https://coinone.co.kr)                          | 2   | [API](https://doc.coinone.co.kr)                                                             | South Korea                             |
-|![korbit](https://github.com/lisa3907/ccxt.net/blob/master/logo-files/favicon-korbit-16x16.png?raw=true) korbit            | korbit             | [Korbit](https://www.korbit.co.kr/)                       | 1   | [API](https://apidocs.korbit.co.kr/)                                                         | South Korea                             |
+|![korbit](https://github.com/lisa3907/ccxt.net/blob/master/logo-files/favicon-korbit-16x16.png?raw=true) korbit           | korbit            | [Korbit](https://www.korbit.co.kr/)                          | 1   | [API](https://apidocs.korbit.co.kr/)                                                             | South Korea                             |
 |![poloniex](https://user-images.githubusercontent.com/1294454/27766817-e9456312-5ee6-11e7-9b3c-b628ca5626a5.jpg)           | poloniex           | [Poloniex](https://poloniex.com)                          | *   | [API](https://poloniex.com/support/api/)                                                     | US                                      |
-|![bitmex](https://user-images.githubusercontent.com/1294454/27766319-f653c6e6-5ed4-11e7-933d-f0bc3699ae8f.jpg)             | bitmex             | [BitMEX](https://www.bitmex.com/register/rm3C16)          | 1   | [API](https://www.bitmex.com/app/apiOverview)                                                | Seychelles                              |
-|![bitfinex](https://user-images.githubusercontent.com/1294454/27766244-e328a50c-5ed2-11e7-947b-041416579bb3.jpg)           | bitfinex           | [Bitfinex](https://www.bitfinex.com)                      | 1   | [API](https://bitfinex.readme.io/v1/docs)                                                    | British Virgin Islands                  |
 
 The list above is updated frequently, new crypto markets, altcoin exchanges, bug fixes, API endpoints are introduced and added on a regular basis. 
 If you don't find a cryptocurrency exchange market in the list above and/or want another exchange to be added, post or send us a link to it by opening an issue here on GitHub or via email.
@@ -84,7 +82,7 @@ We are investing a significant amount of time into the development of this libra
 
 ### Nuget
 
- > Install-Package CCXT.NET -Version 1.2.0
+ > Install-Package CCXT.NET -Version 1.0.0
 
 ### Crypto Donation
 
@@ -92,7 +90,6 @@ We are investing a significant amount of time into the development of this libra
 ETH 0x556E7EdbcCd669a42f00c1Df53D550C00814B0e3
 BTC 15DAoUfaCanpBpTs7VQBK8dRmbQqEnF9WG
 ```
-
 ### Contact
 
 home-page: http://www.odinsoftware.co.kr

@@ -1,12 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using OdinSdk.BaseLib.Coin;
-using OdinSdk.BaseLib.Coin.Private;
-using OdinSdk.BaseLib.Coin.Types;
-using OdinSdk.BaseLib.Configuration;
-using CCXT.NET.Korbit.Public;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CCXT.NET.Korbit.Private
@@ -14,12 +7,12 @@ namespace CCXT.NET.Korbit.Private
     /// <summary>
     /// 
     /// </summary>
-    public class PrivateApi : OdinSdk.BaseLib.Coin.Private.PrivateApi, IPrivateApi
+    public class PrivateApi
     {
         private readonly string __connect_key;
         private readonly string __secret_key;
-        private readonly string __user_name;
-        private readonly string __user_password;
+        private string __user_name;
+        private string __user_password;
 
         /// <summary>
         /// 
@@ -28,397 +21,128 @@ namespace CCXT.NET.Korbit.Private
         {
             __connect_key = connect_key;
             __secret_key = secret_key;
+
             __user_name = user_name;
             __user_password = user_password;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public override XApiClient privateClient
+        private KorbitClient __user_client = null;
+
+        private KorbitClient UserClient
         {
             get
             {
-                if (base.privateClient == null)
-                    base.privateClient = new KorbitClient("private", __connect_key, __secret_key, __user_name, __user_password);
-
-                return base.privateClient;
+                if (__user_client == null)
+                    __user_client = new KorbitClient(__connect_key, __secret_key, __user_name, __user_password);
+                return __user_client;
             }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        public override OdinSdk.BaseLib.Coin.Public.PublicApi publicApi
+        /// <returns>Constants</returns>
+        public async Task<KUserInfo> UserInfo()
         {
-            get
-            {
-                if (base.publicApi == null)
-                    base.publicApi = new CCXT.NET.Korbit.Public.PublicApi();
-
-                return base.publicApi;
-            }
+            return await UserClient.CallApiGetAsync<KUserInfo>("/v1/user/info");
         }
 
         /// <summary>
-        /// Since all BTC exchanges within Korbit are made internally, a BTC address does not need to be assigned to every user. 
-        /// However, to receive BTC from an outside source to your Korbit account, you can set up your BTC receiving address by using the following API.
+        ///
         /// </summary>
-        /// <param name="currency_name">base coin or quote coin name</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async Task<Address> CreateAddress(string currency_name, Dictionary<string, object> args = null)
+        public async Task<KDeposit> UserAccounts()
         {
-            var _result = new Address();
-
-            var _currency_id = await publicApi.LoadCurrencyId(currency_name);
-            if (_currency_id.success == true)
-            {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("currency", _currency_id.result);
-
-                    privateClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await privateClient.CallApiPost1Async("/user/coins/address/assign", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = privateClient.DeserializeObject<KAddressItem>(_json_value.Content);
-                    {
-                        _json_data.currency = currency_name;
-                        _result.result = _json_data;
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_currency_id);
-            }
-
-            return _result;
+            return await UserClient.CallApiGetAsync<KDeposit>("/v1/user/accounts");
         }
 
         /// <summary>
-        /// You can retrieve the wallet/bank info by using the following API call.
+        ///
         /// </summary>
-        /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async Task<Addresses> FetchAddresses(Dictionary<string, object> args = null)
+        public async Task<KBalances> UserBalances()
         {
-            var _result = new Addresses();
-
-            var _markets = await publicApi.LoadMarkets();
-            if (_markets.success == true)
-            {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
-
-                var _params = privateClient.MergeParamsAndArgs(args);
-
-                var _json_value = await privateClient.CallApiGet1Async("/user/accounts", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = privateClient.DeserializeObject<JObject>(_json_value.Content);
-                    {
-                        var _addresses = privateClient.DeserializeObject<Dictionary<string, JObject>>(_json_data["deposit"].ToString());
-
-                        foreach (var _address in _addresses)
-                        {
-                            var _market = _markets.GetMarketByBaseId(_address.Key);
-                            if (_market != null)
-                            {
-                                var _tag = _address.Value.ContainsKey("destination_tag")
-                                         ? _address.Value["destination_tag"].ToString()
-                                         : "";
-
-                                _result.result.Add(new KAddressItem
-                                {
-                                    currency = _market.baseName,
-                                    address = _address.Value["address"].ToString(),
-                                    tag = _tag
-                                });
-                            }
-                        }
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_markets);
-            }
-
-            return _result;
+            return await UserClient.CallApiGetAsync<KBalances>("/v1/user/balances");
         }
 
         /// <summary>
         /// Request BTC Withdrawal
         /// </summary>
-        /// <param name="currency_name">base coin or quote coin name</param>
-        /// <param name="address">coin address for send</param>
-        /// <param name="tag">Secondary address identifier for coins like XRP,XMR etc.</param>
-        /// <param name="quantity">amount of coin</param>
-        /// <param name="args">Add additional attributes for each exchange: [fee_priority]</param>
+        /// <param name="currency">A mandatory parameter. Currently only currency=“btc”, which means Bitcoin is supported.</param>
+        /// <param name="amount">The amount of BTC to withdraw.</param>
+        /// <param name="address">The BTC address to where the BTC is sent.</param>
+        /// <param name="fee_priority">Optional parameter to select withdrawal fee. Set “normal” for fee 0.001 or “saver” for 0.0005. If it is not set, “normal” fee is applied. (Starting from 2017-03-17 2pm KST)</param>
         /// <returns></returns>
-        public override async Task<Transfer> CoinWithdraw(string currency_name, string address, string tag, decimal quantity, Dictionary<string, object> args = null)
+        public async Task<KWithdraw> Withdrawal(string currency, decimal amount, string address, decimal? fee_priority = null)
         {
-            var _result = new Transfer();
-
-            var _currency_id = await publicApi.LoadCurrencyId(currency_name);
-            if (_currency_id.success == true)
+            var _params = new Dictionary<string, object>();
             {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
+                _params.Add("currency", currency.ToLower());
+                _params.Add("amount", amount);
+                _params.Add("address", address);
 
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("currency", _currency_id.result);
-                    _params.Add("amount", quantity);
-                    _params.Add("address", address);
-
-                    privateClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await privateClient.CallApiPost1Async("/user/coins/out", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = privateClient.DeserializeObject<KTransfer>(_json_value.Content);
-                    if (_json_data.success == true)
-                    {
-                        var _withdraw = new KTransferItem
-                        {
-                            transferId = _json_data.transferId,
-                            transactionId = privateClient.GenerateNonceString(16),
-                            timestamp = CUnixTime.NowMilli,
-
-                            transactionType = TransactionType.Withdraw,
-
-                            currency = currency_name,
-                            toAddress = address,
-                            toTag = tag,
-
-                            amount = quantity,
-                            fee = 0,
-
-                            confirmations = 0,
-                            isCompleted = _json_data.success,
-                        };
-
-                        _result.result = _withdraw;
-                    }
-                    else
-                    {
-                        _json_result.SetFailure(_json_data.message);
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_currency_id);
+                if (fee_priority != null)
+                    _params.Add("fee_priority", fee_priority);
             }
 
-            return _result;
+            return await UserClient.CallApiPostAsync<KWithdraw>("/v1/user/coins/out", _params);
         }
 
         /// <summary>
-        /// You can cancel a BTC transfer request by using following API. 
-        /// In case the transfer is being processed by an administrator, or it is completed, you get an error code.
+        /// Cancel BTC Transfer Request
         /// </summary>
-        /// <param name="currency_name">base coin or quote coin name</param>
-        /// <param name="transferId">The unique id of the withdrawal request specified</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <param name="currency">A mandatory parameter. Currently only currency=“btc”, which means Bitcoin is supported.</param>
+        /// <param name="id">The unique ID of the BTC withdrawal request.</param>
         /// <returns></returns>
-        public override async Task<Transfer> CancelCoinWithdraw(string currency_name, string transferId, Dictionary<string, object> args = null)
+        public async Task<KWithdraw> CancelWithdrawal(string currency, string id)
         {
-            var _result = new Transfer();
-
-            var _currency_id = await publicApi.LoadCurrencyId(currency_name);
-            if (_currency_id.success == true)
+            var _params = new Dictionary<string, object>();
             {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("currency", _currency_id.result);
-                    _params.Add("id", transferId);
-
-                    privateClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await privateClient.CallApiPost1Async("/user/coins/out/cancel", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = privateClient.DeserializeObject<KTransfer>(_json_value.Content);
-                    if (_json_data.success == true)
-                    {
-                        var _withdraw = new KTransferItem
-                        {
-                            transferId = _json_data.transferId,
-                            transactionId = privateClient.GenerateNonceString(16),
-                            timestamp = CUnixTime.NowMilli,
-
-                            transactionType = TransactionType.Withdraw,
-
-                            currency = currency_name,
-                            isCompleted = _json_data.success,
-                        };
-
-                        _result.result = _withdraw;
-                    }
-                    else
-                    {
-                        _json_result.SetResult(_json_data);
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_currency_id);
+                _params.Add("currency", currency.ToLower());
+                _params.Add("id", id);
             }
 
-            return _result;
+            return await UserClient.CallApiGetAsync<KWithdraw>("/v1/user/coins/cancel", _params);
         }
 
         /// <summary>
         /// Query Status of BTC Deposit and Transfer
         /// You can query status of BTC deposits and transfers by using the following API
         /// </summary>
-        /// <param name="currency_name">base coin or quote coin name</param>
-        /// <param name="timeframe">time frame interval (optional): default "1d"</param>
-        /// <param name="since">return committed data since given time (milli-seconds) (optional): default 0</param>
-        /// <param name="limits">maximum number of items (optional): default 20</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <param name="currency">A mandatory parameter. Currently only currency=“btc”, which means Bitcoin is supported.</param>
+        /// <param name="id">The unique ID of the BTC withdrawal request. If this parameter is not specified, the API responds with a pending BTC withdrawal request if any.</param>
         /// <returns></returns>
-        public override async Task<Transfers> FetchTransfers(string currency_name, string timeframe = "1d", long since = 0, int limits = 20, Dictionary<string, object> args = null)
+        public async Task<KCoinStatus> DepositsAndWithdrawals(string currency = "btc", string id = "")
         {
-            var _result = new Transfers();
-
-            var _currency_id = await publicApi.LoadCurrencyId(currency_name);
-            if (_currency_id.success == true)
+            var _params = new Dictionary<string, object>();
             {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
-
-                var _timestamp = privateClient.ExchangeInfo.GetTimestamp(timeframe);
-                var _timeframe = privateClient.ExchangeInfo.GetTimeframe(timeframe);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("currency", _currency_id.result);
-                    _params.Add("type", "all");
-                    _params.Add("offset", 0);
-                    _params.Add("limit", limits);
-
-                    privateClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await privateClient.CallApiGet1Async("/user/transfers", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = privateClient.DeserializeObject<List<KTransferItem>>(_json_value.Content);
-                    {
-                        var _transfers = _json_data
-                                                .Where(t => t.timestamp >= since)
-                                                .OrderByDescending(t => t.timestamp)
-                                                .Take(limits);
-
-                        foreach (var _t in _transfers)
-                        {
-                            if (String.IsNullOrEmpty(_t.transactionId) == true)
-                                continue;
-
-                            //_t.transferId = _t.timestamp.ToString();                      // transferId 있음
-                            //_t.transactionId = (_t.timestamp * 1000).ToString();          // transactionId 있음
-
-                            _result.result.Add(_t);
-                        }
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_currency_id);
+                _params.Add("currency", currency.ToLower());
+                if (String.IsNullOrEmpty(id) == false)
+                    _params.Add("id", id);
             }
 
-            return _result;
+            return await UserClient.CallApiGetAsync<KCoinStatus>("/v1/user/coins/status", _params);
         }
 
         /// <summary>
-        /// Check ETH, ETC, and KRW and BTC balances. Request or cancel BTC withdrawals.
+        /// 입출금 내역 조회
         /// </summary>
-        /// <param name="args">Add additional attributes for each exchange</param>
+        /// <param name="currency">입출금 내역을 확인하고자 하는 거래 통화. 현재 KRW, BTC, ETH, ETC, XRP를 지원한다.</param>
+        /// <param name="type">입출금의 종류로, 입금(deposit) 또는 출금(withdrawal)으로 파라미터를 설정할 수 있다. 기본값은 입출금(all)로, 입금 및 출금 내역을 모두 조회할 수 있다.</param>
+        /// <param name="offset">전체 데이터 중 offset(기본값은 0)번째부터 데이터를 가져오도록 지정할 수 있다</param>
+        /// <param name="limit">전체 데이터 중 limit(기본값은 40)개만 가져오도록 지정할 수 있다.</param>
         /// <returns></returns>
-        public override async Task<Balances> FetchBalances(Dictionary<string, object> args = null)
+        public async Task<List<KTransfer>> Transfers(string currency, string type, int offset = 0, int limit = 40)
         {
-            var _result = new Balances();
-
-            var _markets = await publicApi.LoadMarkets();
-            if (_markets.success == true)
+            var _params = new Dictionary<string, object>();
             {
-                privateClient.ExchangeInfo.ApiCallWait(TradeType.Private);
-
-                var _params = privateClient.MergeParamsAndArgs(args);
-
-                var _json_value = await privateClient.CallApiGet1Async("/user/balances", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = privateClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _balances = privateClient.DeserializeObject<Dictionary<string, KBalanceItem>>(_json_value.Content);
-
-                    foreach (var _currency_id in _markets.CurrencyNames)
-                    {
-                        var _balance = _balances.Where(b => b.Key == _currency_id.Key).SingleOrDefault().Value;
-                        if (_balance != null)
-                        {
-                            _balance.used = _balance.trade_in_use + _balance.withdrawal_in_use;
-                            _balance.total = _balance.used + _balance.free;
-                            _balance.currency = _currency_id.Value;
-
-                            _result.result.Add(_balance);
-                        }
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_markets);
+                _params.Add("currency", currency.ToLower());
+                _params.Add("type", type);
+                _params.Add("offset", offset);
+                _params.Add("limit", limit);
             }
 
-            return _result;
+            return await UserClient.CallApiGetAsync<List<KTransfer>>("/v1/user/transfers", _params);
         }
     }
 }

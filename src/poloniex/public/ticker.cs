@@ -1,157 +1,185 @@
 ﻿using Newtonsoft.Json;
-using OdinSdk.BaseLib.Coin.Public;
+using OdinSdk.BaseLib.Configuration;
 
 namespace CCXT.NET.Poloniex.Public
 {
     /// <summary>
     /// 
     /// </summary>
-    public class PTickerItem : OdinSdk.BaseLib.Coin.Public.TickerItem, ITickerItem
+    public interface IPTickerItem
     {
         /// <summary>
-        /// string symbol of the market ('BTCUSD', 'ETHBTC', ...)
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "symbol")]
-        public override string symbol
+        decimal PriceLast
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// highest price for last 24H
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "high24hr")]
-        public override decimal highPrice
+        decimal PriceChangePercentage
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// lowest price for last 24H
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "low24hr")]
-        public override decimal lowPrice
+        decimal Volume24HourBase
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// current best bid (buy) price
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "highestBid")]
-        public override decimal bidPrice
+        decimal Volume24HourQuote
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// current best bid (buy) amount (may be missing or undefined)
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "bidQty")]
-        public override decimal bidQuantity
+        decimal OrderTopBuy
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// current best ask (sell) price
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "lowestAsk")]
-        public override decimal askPrice
+        decimal OrderTopSell
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// current best ask (sell) amount (may be missing or undefined)
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "askQty")]
-        public override decimal askQuantity
+        decimal OrderSpread
         {
             get;
-            set;
         }
 
         /// <summary>
-        /// volume weighted average price
+        /// 
         /// </summary>
-        [JsonProperty(PropertyName = "vwap")]
-        public override decimal vwap
+        decimal OrderSpreadPercentage
+        {
+            get;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool IsFrozen
+        {
+            get;
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PTickerItem : IPTickerItem
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("last")]
+        public decimal PriceLast
+        {
+            get; internal set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("percentChange")]
+        public decimal PriceChangePercentage
+        {
+            get; internal set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("baseVolume")]
+        public decimal Volume24HourBase
+        {
+            get; internal set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("quoteVolume")]
+        public decimal Volume24HourQuote
+        {
+            get; internal set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("highestBid")]
+        public decimal OrderTopBuy
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("lowestAsk")]
+        public decimal OrderTopSell
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal OrderSpread
         {
             get
             {
-                base.vwap = (this.baseVolume != 0) ? this.quoteVolume / this.baseVolume : 0m;
-                return base.vwap;
+                return (OrderTopSell - OrderTopBuy).Normalize();
             }
-            set => base.vwap = value;
-        }
-
-        /// <summary>
-        /// price of last trade (closing price for current period)
-        /// </summary>
-        [JsonProperty(PropertyName = "last")]
-        public override decimal closePrice
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// relative change, `(change/open) * 100`
-        /// </summary>
-        [JsonProperty(PropertyName = "percentChange")]
-        public override decimal percentage
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// volume of base currency traded for last 24 hours
-        /// </summary>
-        [JsonProperty(PropertyName = "quoteVolume")]
-        public override decimal baseVolume
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// volume of quote currency traded for last 24 hours
-        /// </summary>
-        [JsonProperty(PropertyName = "baseVolume")]
-        public override decimal quoteVolume
-        {
-            get;
-            set;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "frozen")]
-        public bool frozen
+        public decimal OrderSpreadPercentage
         {
-            get;
-            set;
+            get
+            {
+                return OrderTopSell / OrderTopBuy - 1;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "isFrozen")]
-        private byte frozenValue
+        [JsonProperty("isFrozen")]
+        internal byte IsFrozenInternal
         {
             set
             {
-                frozen = value != 0;
+                IsFrozen = value != 0;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsFrozen
+        {
+            get; private set;
         }
     }
 }
