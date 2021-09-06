@@ -350,7 +350,7 @@ namespace CCXT.NET.Huobi.Private
         /// </summary>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<HAccounts> GetAccounts(Dictionary<string, object> args = null)
+        public async ValueTask<HAccounts> GetAccounts(Dictionary<string, object> args = null)
         {
             var _result = new HAccounts();
 

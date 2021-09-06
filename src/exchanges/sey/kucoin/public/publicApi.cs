@@ -181,7 +181,7 @@ namespace CCXT.NET.Kucoin.Public
         /// </summary>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<LeaderBoards> FetchLeaderBoard(Dictionary<string, object> args = null)
+        public async ValueTask<LeaderBoards> FetchLeaderBoard(Dictionary<string, object> args = null)
         {
             var _result = new LeaderBoards();
 
@@ -445,7 +445,7 @@ namespace CCXT.NET.Kucoin.Public
         /// <param name="till_time"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<OHLCVs> FetchUdfHistory(string base_name, string quote_name, string resolution = "1d", long from_time = 0, long till_time = 0, Dictionary<string, object> args = null)
+        public async ValueTask<OHLCVs> FetchUdfHistory(string base_name, string quote_name, string resolution = "1d", long from_time = 0, long till_time = 0, Dictionary<string, object> args = null)
         {
             var _result = new OHLCVs(base_name, quote_name);
 

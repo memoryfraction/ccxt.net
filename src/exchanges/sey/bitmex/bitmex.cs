@@ -287,7 +287,7 @@ namespace CCXT.NET.BitMEX
         ///
         /// </summary>
         /// <returns></returns>
-        public async Task<string> CreateSignature(Method verb, string endpoint, string nonce, string json_body = "")
+        public async ValueTask<string> CreateSignature(Method verb, string endpoint, string nonce, string json_body = "")
         {
             return await Task.FromResult
                     (

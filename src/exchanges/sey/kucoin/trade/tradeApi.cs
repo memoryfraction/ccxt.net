@@ -571,7 +571,7 @@ namespace CCXT.NET.Kucoin.Trade
         /// <param name="orders"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<MyOrders> CreateBulkOrder(List<BBulkOrderItem> orders, Dictionary<string, object> args = null)
+        public async ValueTask<MyOrders> CreateBulkOrder(List<BBulkOrderItem> orders, Dictionary<string, object> args = null)
         {
             var _result = new MyOrders();
 
@@ -613,7 +613,7 @@ namespace CCXT.NET.Kucoin.Trade
         /// <param name="price">price of coin</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<MyOrder> ClosePosition(string base_name, string quote_name, OrderType orderType, decimal price = 0.0m, Dictionary<string, object> args = null)
+        public async ValueTask<MyOrder> ClosePosition(string base_name, string quote_name, OrderType orderType, decimal price = 0.0m, Dictionary<string, object> args = null)
         {
             var _result = new MyOrder(base_name, quote_name);
 
@@ -664,7 +664,7 @@ namespace CCXT.NET.Kucoin.Trade
         /// <param name="leverage"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<MyPosition> ChooseLeverage(string base_name, string quote_name, decimal leverage, Dictionary<string, object> args = null)
+        public async ValueTask<MyPosition> ChooseLeverage(string base_name, string quote_name, decimal leverage, Dictionary<string, object> args = null)
         {
             var _result = new MyPosition(base_name, quote_name);
 
@@ -716,7 +716,7 @@ namespace CCXT.NET.Kucoin.Trade
         /// <param name="sideType">type of buy(bid) or sell(ask)</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<MyOrder> UpdateOrder(string base_name, string quote_name, string order_id, decimal quantity, decimal price, SideType sideType, Dictionary<string, object> args = null)
+        public async ValueTask<MyOrder> UpdateOrder(string base_name, string quote_name, string order_id, decimal quantity, decimal price, SideType sideType, Dictionary<string, object> args = null)
         {
             var _result = new MyOrder(base_name, quote_name);
 
@@ -762,7 +762,7 @@ namespace CCXT.NET.Kucoin.Trade
         /// <param name="orders"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<MyOrders> UpdateOrders(List<BBulkUpdateOrderItem> orders, Dictionary<string, object> args = null)
+        public async ValueTask<MyOrders> UpdateOrders(List<BBulkUpdateOrderItem> orders, Dictionary<string, object> args = null)
         {
             var _result = new MyOrders();
 

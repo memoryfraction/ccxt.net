@@ -398,7 +398,7 @@ namespace CCXT.NET.Kucoin.Private
         /// </summary>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<BUserInfo> FetchUserInfo(Dictionary<string, object> args = null)
+        public async ValueTask<BUserInfo> FetchUserInfo(Dictionary<string, object> args = null)
         {
             var _result = new BUserInfo();
 
@@ -430,7 +430,7 @@ namespace CCXT.NET.Kucoin.Private
         /// <param name="channelId"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<Trollbox> SendChatMessage(string message, int channelId, Dictionary<string, object> args = null)
+        public async ValueTask<Trollbox> SendChatMessage(string message, int channelId, Dictionary<string, object> args = null)
         {
             var _result = new Trollbox();
 

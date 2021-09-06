@@ -69,7 +69,7 @@ namespace CCXT.NET.Kraken.Private
         /// </summary>
         /// <param name="currency_id"></param>
         /// <returns></returns>
-        private async Task<NameResult> getDepositMethod(string currency_id)
+        private async ValueTask<NameResult> getDepositMethod(string currency_id)
         {
             var _result = new NameResult();
 

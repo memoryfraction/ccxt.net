@@ -376,7 +376,7 @@ namespace CCXT.NET.Coinone.Private
         /// <param name="currency_name">base coin or quote coin name</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public async Task<CAuthNumber> GetAuthNumberAsync(string currency_name, Dictionary<string, object> args = null)
+        public async ValueTask<CAuthNumber> GetAuthNumberAsync(string currency_name, Dictionary<string, object> args = null)
         {
             var _result = new CAuthNumber();
 

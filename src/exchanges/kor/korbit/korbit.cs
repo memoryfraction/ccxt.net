@@ -116,7 +116,7 @@ namespace CCXT.NET.Korbit
         ///
         /// </summary>
         /// <returns></returns>
-        public async Task<AccessToken> GetAccessToken()
+        public async ValueTask<AccessToken> GetAccessToken()
         {
             if (__access_token.success == true)
             {
@@ -138,7 +138,7 @@ namespace CCXT.NET.Korbit
         ///
         /// </summary>
         /// <returns></returns>
-        public async Task<AccessToken> GetAccessToken(string grant_type, string refresh_token = "")
+        public async ValueTask<AccessToken> GetAccessToken(string grant_type, string refresh_token = "")
         {
             var _result = new AccessToken();
 
