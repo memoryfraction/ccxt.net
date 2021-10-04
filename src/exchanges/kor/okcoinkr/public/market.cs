@@ -90,33 +90,6 @@ namespace CCXT.NET.OkCoinKr.Public
         /// <summary>
         ///
         /// </summary>
-        public string type
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool spot
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool future
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         public int collect
         {
             get;

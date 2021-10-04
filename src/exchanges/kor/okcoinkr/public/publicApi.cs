@@ -80,8 +80,8 @@ namespace CCXT.NET.OkCoinKr.Public
                         _m.baseId = _symbol.Split('_')[0];
                         _m.quoteId = _symbol.Split('_')[1];
 
-                        _m.baseName = publicClient.ExchangeInfo.GetCommonCurrencyName(_m.baseId);
-                        _m.quoteName = publicClient.ExchangeInfo.GetCommonCurrencyName(_m.quoteId);
+                        _m.baseName = publicClient.ExchangeInfo.CurrencyCode(_m.baseId);
+                        _m.quoteName = publicClient.ExchangeInfo.CurrencyCode(_m.quoteId);
 
                         _m.marketId = _m.baseName + "/" + _m.quoteName;
 

@@ -62,8 +62,8 @@ namespace CCXT.NET.Upbit.Public
                         _market.baseId = _symbol.Split('-')[1];
                         _market.quoteId = _symbol.Split('-')[0];
 
-                        _market.baseName = publicClient.ExchangeInfo.GetCommonCurrencyName(_market.baseId);
-                        _market.quoteName = publicClient.ExchangeInfo.GetCommonCurrencyName(_market.quoteId);
+                        _market.baseName = publicClient.ExchangeInfo.CurrencyCode(_market.baseId);
+                        _market.quoteName = publicClient.ExchangeInfo.CurrencyCode(_market.quoteId);
 
                         _market.marketId = _market.baseName + "/" + _market.quoteName;
 

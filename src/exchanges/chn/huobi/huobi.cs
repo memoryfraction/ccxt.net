@@ -106,7 +106,7 @@ namespace CCXT.NET.Huobi
                             { "5m","300" },
                             { "15m","900" },
                             { "30m","1800" },
-                            { "1h","60min" },
+                            { "1h","3600" },
                             { "1d","86400" },
                             { "1w","604800" },
                             { "1M","1mon" },
@@ -167,7 +167,7 @@ namespace CCXT.NET.Huobi
         /// <returns></returns>
         private string GetSignatureStr(Method method, string host, string resourcePath, string parameters)
         {
-            var sign = string.Empty;
+            var sign = String.Empty;
             StringBuilder sb = new StringBuilder();
             sb.Append(method.ToString().ToUpper()).Append("\n")
                 .Append(host).Append("\n")
@@ -181,7 +181,7 @@ namespace CCXT.NET.Huobi
             }
             parametersList.Sort(delegate (string s1, string s2)
             {
-                return string.CompareOrdinal(s1, s2);
+                return String.CompareOrdinal(s1, s2);
             });
             foreach (var item in parametersList)
             {

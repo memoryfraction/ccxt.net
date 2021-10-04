@@ -68,8 +68,8 @@ namespace CCXT.NET.Bitforex.Public
                         _m.baseId = _split_symbol[2];
                         _m.quoteId = _split_symbol[1];
 
-                        _m.baseName = publicClient.ExchangeInfo.GetCommonCurrencyName(_m.baseId);
-                        _m.quoteName = publicClient.ExchangeInfo.GetCommonCurrencyName(_m.quoteId);
+                        _m.baseName = publicClient.ExchangeInfo.CurrencyCode(_m.baseId);
+                        _m.quoteName = publicClient.ExchangeInfo.CurrencyCode(_m.quoteId);
                         _m.marketId = _m.baseName + "/" + _m.quoteName;
 
                         _m.lot = (decimal)Math.Pow(10.0, -(double)_m.precision.quantity);

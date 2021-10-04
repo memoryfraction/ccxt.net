@@ -64,8 +64,8 @@ namespace CCXT.NET.Bitstamp.Public
                         var _base_id = _market_name[0].ToLower();
                         var _quote_id = _market_name[1].ToLower();
 
-                        var _base_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_base_id);
-                        var _quote_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_quote_id);
+                        var _base_name = publicClient.ExchangeInfo.CurrencyCode(_base_id);
+                        var _quote_name = publicClient.ExchangeInfo.CurrencyCode(_quote_id);
 
                         var _market_id = _base_name + "/" + _quote_name;
 

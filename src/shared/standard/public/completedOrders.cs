@@ -278,6 +278,15 @@ namespace CCXT.NET.Shared.Coin.Public
         /// <summary>
         ///
         /// </summary>
+        public CompleteOrders(string symbol)
+                : this()
+        {
+            this.marketId = symbol;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         public CompleteOrders(string base_name, string quote_name)
                 : this()
         {

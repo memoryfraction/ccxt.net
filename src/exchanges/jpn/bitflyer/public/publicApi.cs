@@ -92,8 +92,8 @@ namespace CCXT.NET.Bitflyer.Public
                         var _base_id = _currencies[0];
                         var _quote_id = _currencies[1];
 
-                        var _base_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_base_id);
-                        var _quote_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_quote_id);
+                        var _base_name = publicClient.ExchangeInfo.CurrencyCode(_base_id);
+                        var _quote_name = publicClient.ExchangeInfo.CurrencyCode(_quote_id);
 
                         var _market_id = _base_name + "/" + _quote_name;
 

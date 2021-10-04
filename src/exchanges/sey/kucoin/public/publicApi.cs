@@ -75,8 +75,8 @@ namespace CCXT.NET.Kucoin.Public
                         var _base_id = _m.underlying;
                         var _quote_id = _m.quoteCurrency;
 
-                        var _base_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_base_id);
-                        var _quote_name = publicClient.ExchangeInfo.GetCommonCurrencyName(_quote_id);
+                        var _base_name = publicClient.ExchangeInfo.CurrencyCode(_base_id);
+                        var _quote_name = publicClient.ExchangeInfo.CurrencyCode(_quote_id);
 
                         var _market_id = _base_name + "/" + _quote_name;
 

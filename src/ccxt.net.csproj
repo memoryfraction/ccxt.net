@@ -72,7 +72,6 @@
 
     <ItemGroup>
       <Folder Include="exchanges\chn\phemex\" />
-      <Folder Include="exchanges\sgp\" />
     </ItemGroup>
 
 </Project>

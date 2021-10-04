@@ -88,8 +88,8 @@ namespace CCXT.NET.OKEx.Public
                         _m.baseId = _m.symbol.Split('_')[0];
                         _m.quoteId = _m.symbol.Split('_')[1];
 
-                        _m.baseName = okexapiClient.ExchangeInfo.GetCommonCurrencyName(_m.baseId);
-                        _m.quoteName = okexapiClient.ExchangeInfo.GetCommonCurrencyName(_m.quoteId);
+                        _m.baseName = okexapiClient.ExchangeInfo.CurrencyCode(_m.baseId);
+                        _m.quoteName = okexapiClient.ExchangeInfo.CurrencyCode(_m.quoteId);
 
                         _m.marketId = _m.baseName + "/" + _m.quoteName;
 

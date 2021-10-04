@@ -280,5 +280,15 @@ namespace CCXT.NET.Shared.Extension
         {
             return Decimal.Ceiling(figure * (decimal)Math.Pow(10, precision)) / (decimal)Math.Pow(10, precision);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="svalue"></param>
+        /// <returns></returns>
+        public static bool IsNotEmpty(this string svalue)
+        {
+            return !String.IsNullOrEmpty(svalue);
+        }
     }
 }

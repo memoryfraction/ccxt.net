@@ -248,32 +248,5 @@ namespace CCXT.NET.OKEx.Public
             get;
             set;
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string type
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool spot
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool future
-        {
-            get;
-            set;
-        }
     }
 }

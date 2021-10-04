@@ -247,6 +247,16 @@ namespace CCXT.NET.Shared.Coin.Public
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="symbol"></param>
+        public OHLCVs(string symbol)
+            : this()
+        {
+            this.marketId = symbol;
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>

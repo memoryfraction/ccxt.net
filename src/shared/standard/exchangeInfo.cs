@@ -82,7 +82,9 @@ namespace CCXT.NET.Shared.Coin
                     {
                         { "XBT", "BTC" },
                         { "BCC", "BCH" },
-                        { "DRK", "DASH" }
+                        { "DRK", "DASH" },
+                        { "BCHABC", "BCH" },
+                        { "BCHSV", "BSV" }
                     };
                 }
 
@@ -303,7 +305,7 @@ namespace CCXT.NET.Shared.Coin
         /// </summary>
         /// <param name="currency_id">base or quote id which is used on exchange's server</param>
         /// <returns></returns>
-        public string GetCommonCurrencyName(string currency_id)
+        public string CurrencyCode(string currency_id)
         {
             var _result = currency_id.ToUpper();
 

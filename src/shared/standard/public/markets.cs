@@ -92,6 +92,15 @@ namespace CCXT.NET.Shared.Coin.Public
             get;
             set;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public MarketMinMax cost
+        {
+            get;
+            set;
+        }
     }
 
     /// <summary>
@@ -175,6 +184,33 @@ namespace CCXT.NET.Shared.Coin.Public
         /// order amount should be evenly divisible by lot unit size of
         /// </summary>
         decimal lot
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        string type
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool future
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool spot
         {
             get;
             set;
@@ -316,6 +352,33 @@ namespace CCXT.NET.Shared.Coin.Public
         ///
         /// </summary>
         public virtual decimal takerFee
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual string type
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool future
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool spot
         {
             get;
             set;

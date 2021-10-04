@@ -75,8 +75,8 @@ namespace CCXT.NET.CoinCheck.Public
 
                 _markets.ForEach((m) =>
                 {
-                    var _base_name = publicClient.ExchangeInfo.GetCommonCurrencyName(m.baseId);
-                    var _quote_name = publicClient.ExchangeInfo.GetCommonCurrencyName(m.quoteId);
+                    var _base_name = publicClient.ExchangeInfo.CurrencyCode(m.baseId);
+                    var _quote_name = publicClient.ExchangeInfo.CurrencyCode(m.quoteId);
 
                     m.baseName = _base_name;
                     m.quoteName = _quote_name;

@@ -221,25 +221,7 @@ namespace CCXT.NET.BitMEX.Public
         /// <summary>
         ///
         /// </summary>
-        public bool future
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         public bool prediction
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public string type
         {
             get;
             set;
