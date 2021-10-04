@@ -84,16 +84,9 @@ namespace CCXT.NET.Ftx.Trade
             {
                 tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
 
-                var _timeframe = tradeClient.ExchangeInfo.GetTimeframe(timeframe);
-                var _timestamp = tradeClient.ExchangeInfo.GetTimestamp(timeframe);
-
                 var _params = new Dictionary<string, object>();
                 {
-                    _params.Add("symbol", _market.result.symbol);
-                    _params.Add("count", limits);
-                    if (since > 0)
-                        _params.Add("startTime", CUnixTime.ConvertToUtcTimeMilli(since).ToString("yyyy-MM-dd HH:mm"));
-                    _params.Add("reverse", true);
+                    _params.Add("market", _market.result.symbol);
 
                     tradeClient.MergeParamsAndArgs(_params, args);
                 }
@@ -125,251 +118,6 @@ namespace CCXT.NET.Ftx.Trade
             else
             {
                 _result.SetResult(_market);
-            }
-
-            return _result;
-        }
-
-        /// <summary>
-        /// To get open orders on a symbol.
-        /// </summary>
-        /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
-        /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
-        /// <returns></returns>
-        public override async ValueTask<MyOrders> FetchOpenOrdersAsync(string base_name, string quote_name, Dictionary<string, object> args = null)
-        {
-            var _result = new MyOrders(base_name, quote_name);
-
-            var _market = await publicApi.LoadMarketAsync(_result.marketId);
-            if (_market.success == true)
-            {
-                tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("symbol", _market.result.symbol);
-                    _params.Add("reverse", true);
-                    _params.Add("filter", new CArgument
-                    {
-                        isJson = true,
-                        value = new Dictionary<string, object>
-                        {
-                            { "open", true }
-                        }
-                    });
-
-                    tradeClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await tradeClient.CallApiGet1Async("/api/orders", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = tradeClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    //var _multiplier = publicApi.publicClient.ExchangeInfo.GetAmountMultiplier(_market.result.symbol, 1.0m);
-
-                    var _orders = tradeClient.DeserializeObject<List<BMyOrderItem>>(_json_value.Content);
-                    foreach (var _o in _orders)
-                    {
-                        _o.makerType = MakerType.Maker;
-
-                        _o.amount = _o.price * _o.quantity;
-                        _o.filled = Math.Max(_o.quantity - _o.remaining, 0);
-                        _o.cost = _o.price * _o.filled;
-
-                        _result.result.Add(_o);
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_market);
-            }
-
-            return _result;
-        }
-
-        /// <summary>
-        /// Get all open orders on a symbol. Careful when accessing this with no symbol.
-        /// </summary>
-        /// <param name="args">Add additional attributes for each exchange</param>
-        /// <returns></returns>
-        public override async ValueTask<MyOrders> FetchAllOpenOrdersAsync(Dictionary<string, object> args = null)
-        {
-            var _result = new MyOrders();
-
-            var _markets = await publicApi.LoadMarketsAsync();
-            if (_markets.success == true)
-            {
-                tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("reverse", true);
-                    _params.Add("filter", new CArgument
-                    {
-                        isJson = true,
-                        value = new Dictionary<string, object>
-                        {
-                            { "open", true }
-                        }
-                    });
-
-                    tradeClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await tradeClient.CallApiGet1Async("/api/v1/order", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = tradeClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _orders = tradeClient.DeserializeObject<List<BMyOrderItem>>(_json_value.Content);
-                    foreach (var _o in _orders.Where(o => OrderStatusConverter.IsAlive(o.orderStatus) == true))
-                    {
-                        //var _multiplier = publicApi.publicClient.ExchangeInfo.GetAmountMultiplier(_o.symbol, 1.0m);
-
-                        _o.makerType = MakerType.Maker;
-
-                        _o.amount = _o.price * _o.quantity;
-                        _o.filled = Math.Max(_o.quantity - _o.remaining, 0);
-                        _o.cost = _o.price * _o.filled;
-
-                        _result.result.Add(_o);
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_markets);
-            }
-
-            return _result;
-        }
-
-        /// <summary>
-        /// To get open positions on a symbol.
-        /// </summary>
-        /// <param name="base_name">The type of trading base-currency of which information you want to query for.</param>
-        /// <param name="quote_name">The type of trading quote-currency of which information you want to query for.</param>
-        /// <param name="args">Add additional attributes for each exchange</param>
-        /// <returns></returns>
-        public override async ValueTask<MyPositions> FetchOpenPositionsAsync(string base_name, string quote_name, Dictionary<string, object> args = null)
-        {
-            var _result = new MyPositions(base_name, quote_name);
-
-            var _market = await publicApi.LoadMarketAsync(_result.marketId);
-            if (_market.success == true)
-            {
-                tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
-
-                var _params = new Dictionary<string, object>();
-                {
-                    _params.Add("filter", new CArgument
-                    {
-                        isJson = true,
-                        value = new Dictionary<string, object>
-                        {
-                            { "symbol", _market.result.symbol }
-                        }
-                    });
-
-                    tradeClient.MergeParamsAndArgs(_params, args);
-                }
-
-                var _json_value = await tradeClient.CallApiGet1Async("/api/v1/position", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = tradeClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = tradeClient.DeserializeObject<List<BMyPositionItem>>(_json_value.Content);
-                    {
-                        var _positions = _json_data
-                                            .OrderByDescending(p => p.timestamp);
-
-                        foreach (var _p in _positions)
-                        {
-                            _p.orderType = OrderType.Position;
-
-                            _p.orderStatus = _p.isOpen ? OrderStatus.Open : OrderStatus.Closed;
-                            _p.sideType = _p.quantity > 0 ? SideType.Bid : _p.quantity < 0 ? SideType.Ask : SideType.Unknown;
-
-                            _p.quantity = Math.Abs(_p.quantity);
-                            _p.amount = _p.price * _p.quantity;
-
-                            _result.result.Add(_p);
-                        }
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_market);
-            }
-
-            return _result;
-        }
-
-        /// <summary>
-        /// Get open positions
-        /// </summary>
-        /// <param name="args">Add additional attributes for each exchange</param>
-        /// <returns></returns>
-        public override async ValueTask<MyPositions> FetchAllOpenPositionsAsync(Dictionary<string, object> args = null)
-        {
-            var _result = new MyPositions();
-
-            var _markets = await publicApi.LoadMarketsAsync();
-            if (_markets.success == true)
-            {
-                tradeClient.ExchangeInfo.ApiCallWait(TradeType.Trade);
-
-                var _params = tradeClient.MergeParamsAndArgs(args);
-
-                var _json_value = await tradeClient.CallApiGet1Async("/api/v1/position", _params);
-#if DEBUG
-                _result.rawJson = _json_value.Content;
-#endif
-                var _json_result = tradeClient.GetResponseMessage(_json_value.Response);
-                if (_json_result.success == true)
-                {
-                    var _json_data = tradeClient.DeserializeObject<List<BMyPositionItem>>(_json_value.Content);
-                    {
-                        var _positions = _json_data
-                                            .OrderByDescending(p => p.timestamp);
-
-                        foreach (var _p in _positions)
-                        {
-                            _p.orderType = OrderType.Position;
-
-                            _p.orderStatus = _p.isOpen ? OrderStatus.Open : OrderStatus.Closed;
-                            _p.sideType = _p.quantity > 0 ? SideType.Bid : _p.quantity < 0 ? SideType.Ask : SideType.Unknown;
-
-                            _p.quantity = Math.Abs(_p.quantity);
-                            _p.amount = _p.price * _p.quantity;
-
-                            _result.result.Add(_p);
-                        }
-                    }
-                }
-
-                _result.SetResult(_json_result);
-            }
-            else
-            {
-                _result.SetResult(_markets);
             }
 
             return _result;
@@ -409,7 +157,7 @@ namespace CCXT.NET.Ftx.Trade
                     tradeClient.MergeParamsAndArgs(_params, args);
                 }
 
-                var _json_value = await tradeClient.CallApiGet1Async("/api/v1/execution/tradeHistory", _params);
+                var _json_value = await tradeClient.CallApiGet1Async($"/api/markets/USD/trades", _params);
 #if DEBUG
                 _result.rawJson = _json_value.Content;
 #endif
@@ -487,9 +235,6 @@ namespace CCXT.NET.Ftx.Trade
 
                         _order.remaining = Math.Max(_order.quantity - _order.filled, 0);
                         _order.cost = _order.price * _order.filled;
-
-                        //_order.amount = (_order.quantity * _order.price).Normalize();
-                        //_order.fee = _order.amount * tradeClient.ExchangeInfo.Fees.trading.maker;
 
                         _result.result = _order;
                     }
