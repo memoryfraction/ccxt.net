@@ -102,13 +102,13 @@ namespace CCXT.NET.Huobi
                         },
                         Timeframes = new Dictionary<string, string>
                         {
-                            { "1m","1min" },
-                            { "5m","5min" },
-                            { "15m","15min" },
-                            { "30m","30min" },
+                            { "1m","60" },
+                            { "5m","300" },
+                            { "15m","900" },
+                            { "30m","1800" },
                             { "1h","60min" },
-                            { "1d","1day" },
-                            { "1w","1week" },
+                            { "1d","86400" },
+                            { "1w","604800" },
                             { "1M","1mon" },
                             { "1y","1year" }
                         }

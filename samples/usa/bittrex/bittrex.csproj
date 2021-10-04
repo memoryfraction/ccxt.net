@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ccxt.net.csproj" />
+    <ProjectReference Include="..\..\..\src\ccxt.net.csproj" />
   </ItemGroup>
 
 </Project>

@@ -138,12 +138,18 @@ namespace CCXT.NET.Shared.Coin
         /// Requests were made too frequently
         /// </summary>
         [Description("requests were made too frequently")]
-        RateLimit,
+        RateLimitExceeded,
 
         /// <summary>
         /// server busy please try again later, request too often
         /// </summary>
         [Description("server busy please try again later, request too often")]
-        DDoSProtection
+        DDoSProtection,
+
+        /// <summary>
+        /// Duplicate client order ID
+        /// </summary>
+        [Description("Duplicate client order ID")]
+        DuplicateOrderId
     }
 }
