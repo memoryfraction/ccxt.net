@@ -242,6 +242,13 @@ namespace CCXT.NET.BitMEX.Trade
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public BBulkOrderItem()
+        {
+        }
+
+        /// <summary>
         /// Ctor. Accepts Typed parameters for convenience.
         /// </summary>
         public BBulkOrderItem(string symbol, SideType side, OrderType orderType, decimal orderQty, decimal price, string execInst = "")

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using CCXT.NET.Shared.Coin.Private;
+﻿using CCXT.NET.Shared.Coin.Private;
 using CCXT.NET.Shared.Coin.Types;
 using CCXT.NET.Shared.Configuration;
+using Newtonsoft.Json;
 using System;
 
 namespace CCXT.NET.Ftx.Private

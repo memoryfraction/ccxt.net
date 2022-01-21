@@ -1,5 +1,7 @@
 ﻿using CCXT.NET.Shared.Configuration;
+using RestSharp;
 using System;
+using System.Linq;
 using System.Globalization;
 
 namespace CCXT.NET.Shared.Extension
@@ -289,6 +291,16 @@ namespace CCXT.NET.Shared.Extension
         public static bool IsNotEmpty(this string svalue)
         {
             return !String.IsNullOrEmpty(svalue);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        public static void ParametersClear(this RestRequest request)
+        {
+            foreach (var _param in request.Parameters.ToList())
+                request.Parameters.RemoveParameter(_param);
         }
     }
 }

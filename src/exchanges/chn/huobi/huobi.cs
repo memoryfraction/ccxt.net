@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
-using CCXT.NET.Shared.Coin;
+﻿using CCXT.NET.Shared.Coin;
 using CCXT.NET.Shared.Configuration;
+using CCXT.NET.Shared.Extension;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace CCXT.NET.Huobi
 {
@@ -145,9 +146,9 @@ namespace CCXT.NET.Huobi
             StringBuilder builder = new StringBuilder();
             foreach (char c in str)
             {
-                if (HttpUtility.UrlEncode(c.ToString(), Encoding.UTF8).Length > 1)
+                if (WebUtility.UrlEncode(c.ToString()).Length > 1)
                 {
-                    builder.Append(HttpUtility.UrlEncode(c.ToString(), Encoding.UTF8).ToUpper());
+                    builder.Append(WebUtility.UrlEncode(c.ToString()).ToUpper());
                 }
                 else
                 {
@@ -199,7 +200,7 @@ namespace CCXT.NET.Huobi
         /// <param name="endpoint">api link address of a function</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreatePostRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreatePostRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreatePostRequestAsync(endpoint, args);
 
@@ -214,7 +215,7 @@ namespace CCXT.NET.Huobi
                 }
 
                 var _post_data = ToQueryString(_params);
-                var _signature = GetSignatureStr(Method.POST, ApiUrl.Replace("https://", ""), endpoint, _post_data);
+                var _signature = GetSignatureStr(Method.Post, ApiUrl.Replace("https://", ""), endpoint, _post_data);
 
                 _post_data += "&Signature=" + _signature;
 
@@ -232,7 +233,7 @@ namespace CCXT.NET.Huobi
         /// <param name="endpoint">api link address of a function</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreateGetRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreateGetRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreateGetRequestAsync($"{endpoint}", args);
 
@@ -250,10 +251,10 @@ namespace CCXT.NET.Huobi
                     foreach (var arg in args)
                         _params.Add(arg.Key, arg.Value.ToString());
 
-                _request.Parameters.Clear();
+                _request.ParametersClear();
 
                 var _post_data = ToQueryString(_params);
-                var _signature = GetSignatureStr(Method.GET, ApiUrl.Replace("https://", ""), endpoint, _post_data);
+                var _signature = GetSignatureStr(Method.Get, ApiUrl.Replace("https://", ""), endpoint, _post_data);
 
                 _post_data += "&Signature=" + _signature;
 
@@ -270,7 +271,7 @@ namespace CCXT.NET.Huobi
         /// </summary>
         /// <param name="response">response value arrive from exchange's server</param>
         /// <returns></returns>
-        public override BoolResult GetResponseMessage(IRestResponse response = null)
+        public override BoolResult GetResponseMessage(RestResponse response = null)
         {
             var _result = new BoolResult();
 

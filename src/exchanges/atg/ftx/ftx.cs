@@ -150,7 +150,7 @@ namespace CCXT.NET.Ftx
         /// <param name="endpoint">api link address of a function</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreatePostRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreatePostRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreatePostRequestAsync(endpoint);
 
@@ -182,7 +182,7 @@ namespace CCXT.NET.Ftx
         /// <param name="endpoint"></param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreatePutRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreatePutRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreatePutRequestAsync(endpoint);
 
@@ -214,7 +214,7 @@ namespace CCXT.NET.Ftx
         /// <param name="endpoint">api link address of a function</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreateGetRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreateGetRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreateGetRequestAsync(endpoint, args);
 
@@ -245,7 +245,7 @@ namespace CCXT.NET.Ftx
         /// <param name="endpoint">api link address of a function</param>
         /// <param name="args">Add additional attributes for each exchange</param>
         /// <returns></returns>
-        public override async ValueTask<IRestRequest> CreateDeleteRequestAsync(string endpoint, Dictionary<string, object> args = null)
+        public override async ValueTask<RestRequest> CreateDeleteRequestAsync(string endpoint, Dictionary<string, object> args = null)
         {
             var _request = await base.CreateDeleteRequestAsync(endpoint);
 
@@ -320,7 +320,7 @@ namespace CCXT.NET.Ftx
         /// </summary>
         /// <param name="response">response value arrive from exchange's server</param>
         /// <returns></returns>
-        public override BoolResult GetResponseMessage(IRestResponse response = null)
+        public override BoolResult GetResponseMessage(RestResponse response = null)
         {
             var _result = new BoolResult();
 
