@@ -19,10 +19,10 @@
         <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
         <RootNamespace>CCXT.NET</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.4.11</Version>
+        <Version>1.4.12</Version>
         <PackageReleaseNotes>Upgrade to net6.0 and update nuget.</PackageReleaseNotes>
-        <AssemblyVersion>1.4.11.1</AssemblyVersion>
-        <FileVersion>1.4.11.1</FileVersion>
+        <AssemblyVersion>1.4.12.2</AssemblyVersion>
+        <FileVersion>1.4.12.2</FileVersion>
         <LangVersion>latest</LangVersion>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

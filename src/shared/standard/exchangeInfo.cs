@@ -320,6 +320,27 @@ namespace CCXT.NET.Shared.Coin
 
             return _result;
         }
+        
+        /// <summary>
+        /// read only
+        /// </summary>
+        /// <param name="currency_id">base or quote id which is used on exchange's server</param>
+        /// <returns></returns>
+        public string GetCommonCurrencyName(string currency_id)
+        {
+            var _result = currency_id.ToUpper();
+
+            foreach (var _id in this.CurrencyIds)
+            {
+                if (_id.Key == _result)
+                {
+                    _result = _id.Value;
+                    break;
+                }
+            }
+
+            return _result;
+        }
 
         /// <summary>
         ///
